@@ -8,13 +8,13 @@ pipeline{
          }
          stage('Docker build'){
              steps{
-                sh "docker build -t dillibabun97/hiring:tagname ."
+                sh "docker build -t dillibabun97/hiring:0.0.1 ."
              }
          }
          stage('Docker Push'){
              steps{
                 sh "docker login -u dillibabun97 -p Seenu94@a"
-                sh "docker push dillibabun97/hiring:0.0.2" 
+                sh "docker push dillibabun97/hiring:0.0.1" 
              }
          }
      }
