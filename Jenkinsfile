@@ -2,27 +2,19 @@ pipeline{
     agent any
      stages{
          stage('mvn clean package'){
-             when {
-                 branch 'develop'
-             }
              steps{
                 sh 'mvn clean package' 
              }
          }
-         stage('Tomcat Deploy-Dev'){
-             when {
-                 branch 'develop'
-             }
+         stage('Docker build'){
              steps{
-                echo "Deploy to Dev"
+                sh "docker build -t dillibabun97/hiring:0.0.1 ."
              }
          }
-         stage('Tomcat Deploy-Prod'){
-             when {
-                 branch 'main'
-             }
+         stage('Docker Push'){
              steps{
-                echo "Deploy to Production"
+                sh "docker login -u dillibabun97 -p Seenu94@a"
+                sh "docker push dillibabun97/hiring:0.0.1" 
              }
          }
      }
