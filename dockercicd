@@ -1,0 +1,37 @@
+pipeline{
+    agent any
+    stages{
+        stage("Git Code Checkout"){
+            steps{
+                git branch: 'main', 
+                    credentialsId: 'github-credentials', 
+                    url: 'https://github.com/dillibabu2077/hiring.git'
+            }
+        }
+        stage("Maven Build"){
+            steps{
+                sh 'mvn clean package'
+            }
+        }
+        stage("Docker build"){
+            steps{
+                sh 'docker build -t dillibabun97/hiring:0.0.1 .'
+            }
+        }
+        stage("Docker push"){
+            steps{
+                withCredentials([string(credentialsId: 'Dockerhub', variable: 'hubpwd')]) {
+                sh 'docker login -u dillibabun97 -p ${hubpwd}'
+                sh 'docker push dillibabun97/hiring:0.0.1'
+             }
+            } 
+            }
+        stage("Docker Deploy"){
+            steps{
+                sshagent(['Docker_hub']) {
+                   sh 'ssh -o StrictHostKeyChecking=no azureuser@10.0.0.4 docker run -p -d 8080:8080 --name hiring dillibabun97/hiring:0.0.1'
+             }
+            }
+        }
+    }
+}
